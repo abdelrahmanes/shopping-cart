@@ -7,6 +7,16 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  cartItem,
+  decreaseItems,
+  increaseItems,
+  initialState,
+  resetItemQuantity,
+} from "../Redux/features/shoppingCart/shoppingCartSlice";
+import { RootState } from "../Redux/store";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -41,8 +51,14 @@ interface ProductCardProps {
 
 export function ProductCard({ item }: ProductCardProps) {
   const { classes } = useStyles();
-  const { title, price, image } = item;
-  let quantity = 0;
+  const { title, price, image, id } = item;
+  const dispatch = useDispatch();
+
+  const quantity = useSelector(
+    (state: RootState) =>
+      state.cartReducer.cartItems?.find((item: cartItem) => item.id === id)
+        ?.quantity || 0
+  );
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
@@ -60,16 +76,25 @@ export function ProductCard({ item }: ProductCardProps) {
         </Group>
       </Card.Section>
 
-      <Group mt="xs">
+      <Group mt="xs" h={"84px"}>
         {quantity === 0 ? (
-          <Button className="bg-blue-500" radius="md" style={{ flex: 1 }}>
+          <Button
+            onClick={() => {
+              dispatch(increaseItems(id));
+            }}
+            className="bg-blue-500"
+            radius="md"
+            style={{ flex: 1 }}
+          >
             Add to cart
           </Button>
         ) : (
           <div className="flex flex-col justify-center items-center w-full">
             <p className="mb-4 text-sm">
-              <span className="text-blue-500 text-2xl font-bold">1</span> in
-              cart
+              <span className="text-blue-500 text-2xl font-bold">
+                {quantity}
+              </span>{" "}
+              in cart
             </p>
             <div className="flex justify-center items-center gap-2">
               <Button
@@ -77,6 +102,9 @@ export function ProductCard({ item }: ProductCardProps) {
                 color={"red"}
                 radius="md"
                 style={{ flex: 1 }}
+                onClick={() => {
+                  dispatch(decreaseItems(id));
+                }}
               >
                 -
               </Button>
@@ -85,6 +113,9 @@ export function ProductCard({ item }: ProductCardProps) {
                 className="border border-gray-500 text-red-500 transition duration-200 bg-gray-100"
                 radius="md"
                 style={{ flex: 1 }}
+                onClick={() => {
+                  dispatch(resetItemQuantity(id));
+                }}
               >
                 &times;
               </Button>
@@ -93,6 +124,9 @@ export function ProductCard({ item }: ProductCardProps) {
                 color={"blue"}
                 radius="md"
                 style={{ flex: 1 }}
+                onClick={() => {
+                  dispatch(increaseItems(id));
+                }}
               >
                 +
               </Button>
