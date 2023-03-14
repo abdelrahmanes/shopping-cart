@@ -7,16 +7,14 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import useItemQuantity from "../hooks/useItemQuantity";
 
 import {
-  cartItem,
   decreaseItems,
   increaseItems,
-  initialState,
   resetItemQuantity,
 } from "../Redux/features/shoppingCart/shoppingCartSlice";
-import { RootState } from "../Redux/store";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -54,11 +52,7 @@ export function ProductCard({ item }: ProductCardProps) {
   const { title, price, image, id } = item;
   const dispatch = useDispatch();
 
-  const quantity = useSelector(
-    (state: RootState) =>
-      state.cartReducer.cartItems?.find((item: cartItem) => item.id === id)
-        ?.quantity || 0
-  );
+  const quantity = useItemQuantity(id);
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
@@ -66,7 +60,7 @@ export function ProductCard({ item }: ProductCardProps) {
       </Card.Section>
 
       <Card.Section className={`${classes.section} border-b-0`} mt="md">
-        <Group position="apart">
+        <Group position="apart" noWrap>
           <Text truncate w={250} fz="lg" fw={500}>
             {title}
           </Text>

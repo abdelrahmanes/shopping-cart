@@ -46,9 +46,19 @@ const shoppingCartSlice = createSlice({
       );
       selectedItem!.quantity = 0;
     },
+
+    getTotalQuantity: (state) => {
+      state.cartItems
+        .map((cartItem) => cartItem.quantity)
+        ?.reduce((total, curr) => total + curr);
+    },
   },
 });
 
 export default shoppingCartSlice.reducer;
-export const { increaseItems, decreaseItems, resetItemQuantity } =
-  shoppingCartSlice.actions;
+export const {
+  increaseItems,
+  decreaseItems,
+  resetItemQuantity,
+  getTotalQuantity,
+} = shoppingCartSlice.actions;
